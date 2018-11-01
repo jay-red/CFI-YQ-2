@@ -1,5 +1,7 @@
 import colorfight as cf
 import random
+from json import dumps, loads
+import sys
 
 class Player:
 	"""
@@ -25,17 +27,27 @@ class Player:
 		self.width = self.game.width
 		self.height = self.game.height
 
-	def Join( self, name="ExJayNine" ):
-		self.game.JoinGame( name )
+	def Join( self, name = "" ):
+		if name == "":
+			print "usage: Join( name )"
+		data = self.game.JoinGame( name )
 		self.InitializeGame()
+		return data
 
 	def Start( self, debug = 0 ):
 		if debug == 0:
 			while True:
-				print "Test"
 				self.FetchInfo()
 				self.GameLoop()
 				self.Refresh()
+		else:
+			newArr = []
+			for y in range( self.height ):
+				line = []
+				for x in range( self.width ):
+					line.append( self.GetCell( x, y ).takeTime )
+				newArr.append( line )
+			print dumps( newArr )
 
 	"""
 		Recreation of Built-in Functions for future Cython Implementation
@@ -64,20 +76,28 @@ class Player:
 		self.energyCellNum = self.game.energyCellNum
 
 	"""
-		Player Defined Functions
+		Player Defined Utilities
 	"""
 
 	def Cooldown( self ):
 		return self.cdTime >= self.currTime
 
+	def OwnCell( self, cell ):
+		return cell.owner == self.uid
+
+	"""
+		Player Defined Actions
+	"""
+
 	def Attack( self, cell ):
 		while self.Cooldown():
 			self.Refresh()
 			self.FetchInfo()
-		return self.AttackCell( cell.x, cell.y )
-
-	def OwnCell( self, cell ):
-		return cell.owner == self.uid
+		data = self.AttackCell( cell.x, cell.y )
+		if data[ 0 ]:
+			while not self.OwnCell( self.GetCell( cell.x, cell.y ) ):
+				self.Refresh()
+		return data
 
 	def GameLoop( self ):
 		for x in range( self.game.width ):
@@ -93,5 +113,7 @@ class Player:
 								return
 
 player = Player()
-player.Join()
-player.Start()
+if len( sys.argv ) == 2:
+	joined = player.Join( sys.argv[ 1 ] )
+	if joined:
+		player.Start()
