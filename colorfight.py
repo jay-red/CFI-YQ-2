@@ -96,7 +96,7 @@ class Game:
             for c in name:
                 tokenFileName += str( ord( c ) )
         if force == False and os.path.isfile(tokenFileName):
-            with open('token') as f:
+            with open(tokenFileName) as f:
                 self.token = f.readline().strip()
                 data = CheckToken(self.token)
                 if data != None:
