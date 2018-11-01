@@ -61,6 +61,9 @@ class XJ9:
 	def Refresh( self ):
 		self.game.Refresh()
 
+	def BuildBase( self, x, y ):
+		return self.game.BuildBase( x, y )
+
 	"""
 		Functions for Gathering Relevant Information
 	"""
