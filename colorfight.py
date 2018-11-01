@@ -84,15 +84,18 @@ class Game:
         self.gameVersion = ''
         self.Refresh()
 
-    def JoinGame(self, name, password = None, force = False, host = None):
+    def JoinGame(self, name, password = None, force = False, host = None, token = False):
         if type(name) != str:
             print("Your name has to be a string!")
             return False
         if host != None:
             global hostUrl
             hostUrl = host
-
-        if force == False and os.path.isfile('token'):
+        tokenFileName = 'token'
+        if token:
+            for c in name:
+                tokenFileName += str( ord( c ) )
+        if force == False and os.path.isfile(tokenFileName):
             with open('token') as f:
                 self.token = f.readline().strip()
                 data = CheckToken(self.token)
@@ -109,7 +112,7 @@ class Game:
         r = requests.post(hostUrl + 'joingame', data=json.dumps(data), headers = headers)
         if r.status_code == 200:
             data = r.json()
-            with open('token', 'w') as f:
+            with open(tokenFileName, 'w') as f:
                 f.write(data['token'] + '\n')
             self.token = data['token']
             self.uid   = data['uid']

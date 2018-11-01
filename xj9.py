@@ -1,9 +1,8 @@
 import colorfight as cf
 import random
 from json import dumps, loads
-import sys
 
-class Player:
+class XJ9:
 	"""
 		Initialization for the Player and its Variables
 	"""
@@ -30,7 +29,7 @@ class Player:
 	def Join( self, name = "" ):
 		if name == "":
 			print "usage: Join( name )"
-		data = self.game.JoinGame( name )
+		data = self.game.JoinGame( name, token = True )
 		self.InitializeGame()
 		return data
 
@@ -100,20 +99,4 @@ class Player:
 		return data
 
 	def GameLoop( self ):
-		for x in range( self.game.width ):
-			for y in range( self.game.height ):
-				c = self.GetCell( x, y )
-				if self.OwnCell( c ):
-					d = random.choice( [ ( 0, 1 ), ( 0, -1 ), ( 1, 0 ), ( -1, 0 ) ] )
-					cc = self.GetCell( x + d[ 0 ], y + d[ 1 ] )
-					if cc != None:
-						if not self.OwnCell( cc ):
-							if cc.takeTime <= 4.0:
-								print( self.Attack( cc ) )
-								return
-
-player = Player()
-if len( sys.argv ) == 2:
-	joined = player.Join( sys.argv[ 1 ] )
-	if joined:
-		player.Start()
+		pass
